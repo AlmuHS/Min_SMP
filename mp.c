@@ -30,6 +30,8 @@ extern uint32 nioapic;
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
 
+volatile struct icr_low* icr_low_addr = (struct icr_low*) 0xFEE00300;
+volatile struct icr_high* icr_high_addr = (struct icr_high*) 0xFEE00310;
 
 int
 mp_setup(){
@@ -74,14 +76,21 @@ mp_print_info(){
 int16 cpu_number(){
 	uint16 apic_id;
 	int i = 0;
-
+	
+	//Read apic id from the current cpu, using its lapic
 	apic_id = *(uint16*) (lapic+0x20);
 
-	//printf("apic id: %x ", apic_id);
-
+	//Search apic id in cpu2apic vector
 	while(cpus[i].apic_id != apic_id && i < ncpu) i = i+1;
 
 	if(i == ncpu) return -1;
+
 	else return i;
+}
+
+
+void send_IPI(struct icr_high icr_h, struct icr_low icr_l){
+	*icr_low_addr = icr_l;
+	*icr_high_addr = icr_h;
 }
 

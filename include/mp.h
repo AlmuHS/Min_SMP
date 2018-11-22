@@ -24,6 +24,24 @@ struct cpu {
     uint8 apic_id;
 };
 
+struct icr_high{
+	uint32 reserved:24;
+	uint8 dest:8;
+};
+
+struct icr_low{
+	uint8 vector:8;
+	uint8 type:3;
+	uint8 dest_mode:1;
+	uint8 deliv_status:1;
+	uint8 reserved1:1;
+	uint8 level:1;
+	uint8 trigger_mode:1;
+	uint8 reserved2:2;
+	uint8 dest_shorthand:2;
+	uint16 reserved3:12;
+};
+
 int mp_setup();
 
 void mp_print_info();
