@@ -29,16 +29,53 @@ struct icr_high{
 	uint8 dest:8;
 };
 
+
+enum type_enum{
+	Fixed = 0b000,
+	LowestPriority = 0b001,
+	SMI = 0b010,
+	NMI = 0b100,
+	INIT = 0b101,
+	StartUp = 0b110
+};
+
+enum dest_mode_enum{
+	Physical = 0b0,
+	Logical = 0b1
+};
+
+enum deliv_status_enum{
+	Idle = 0b0,
+	SendPending = 0b1
+};
+
+enum level_enum{
+	De_assert = 0b0,
+	Assert = 0b1
+};
+
+enum trig_mode_enum{
+	Edge = 0b0,
+	Level = 0b1
+};
+
+enum dest_sh_enum{
+	NoShortHand = 0b00,
+	Self = 0b01,
+	AllIncludingSelf = 0b10,
+	AllExcludingSelf = 0b11
+};
+
 struct icr_low{
 	uint8 vector:8;
-	uint8 type:3;
-	uint8 dest_mode:1;
-	uint8 deliv_status:1;
+	enum type_enum type:3;
+	enum dest_mode_enum dest_mode:1;
+	enum deliv_status_enum deliv_status:1;
 	uint8 reserved1:1;
-	uint8 level:1;
-	uint8 trigger_mode:1;
+	enum level_enum level:1;
+	enum trig_mode_enum trigger_mode:1;
 	uint8 reserved2:2;
-	uint8 dest_shorthand:2;
+	enum dest_sh_enum dest_shorthand:2;
 	uint16 reserved3:12;
 };
 
