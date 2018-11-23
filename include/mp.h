@@ -58,7 +58,7 @@ enum dest_sh_enum{
 	NoShortHand = 0x0,
 	Self = 0x1,
 	AllIncludingSelf = 0x2,
-	AllExcludingSelf = 0x3;
+	AllExcludingSelf = 0x3
 };
 
 struct icr_low{
