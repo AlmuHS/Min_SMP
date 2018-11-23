@@ -25,13 +25,12 @@
 int ncpu;
 struct cpu cpus[NCPU];
 
-extern uint32 lapic;
+extern volatile uint32 lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
 
-volatile struct icr_low* icr_low_addr = (struct icr_low*) 0xFEE00300;
-volatile struct icr_high* icr_high_addr = (struct icr_high*) 0xFEE00310;
+
 
 
 

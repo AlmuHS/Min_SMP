@@ -15,27 +15,15 @@
 #include <lapic.h>
 #include <types.h>
 #include <traps.h>
+#include <mp.h>
 
-uint32* lapic;
+volatile uint32* lapic;
 
 // Local APIC registers, divided by 4 for use as uint[] indices.
-#define ID      (0x0020/4)   // ID
-#define VER     (0x0030/4)   // Version
-#define TPR     (0x0080/4)   // Task Priority
-#define EOI     (0x00B0/4)   // EOI
-#define SVR     (0x00F0/4)   // Spurious Interrupt Vector
+//#define SVR     (0x00F0/4)   // Spurious Interrupt Vector
   #define ENABLE     0x00000100   // Unit Enable
 #define ESR     (0x0280/4)   // Error Status
-#define ICRLO   (0x0300/4)   // Interrupt Command
-  #define INIT       0x00000500   // INIT/RESET
-  #define STARTUP    0x00000600   // Startup IPI
-  #define DELIVS     0x00001000   // Delivery status
-  #define ASSERT     0x00004000   // Assert interrupt (vs deassert)
-  #define DEASSERT   0x00000000
-  #define LEVEL      0x00008000   // Level triggered
-  #define BCAST      0x00080000   // Send to all APICs, including self.
-  #define BUSY       0x00001000
-  #define FIXED      0x00000000
+
 #define ICRHI   (0x0310/4)   // Interrupt Command [63:32]
 #define TIMER   (0x0320/4)   // Local Vector Table 0 (TIMER)
   #define X1         0x0000000B   // divide counts by 1
@@ -49,20 +37,30 @@ uint32* lapic;
 #define TCCR    (0x0390/4)   // Timer Current Count
 #define TDCR (0x03E0/4) // Timer Divide Configuration
 
-//volatile uint32 *lapic_t = (uint32*) lapic; 
+enum lapic_table{
+	ID = 0x0020/4, // ID
+	VER = 0x0030/4, //Version
+	TPR = 0x0080/4, //Task Priority
+	EOI = 0x00B0/4,   // EOI
+	SVR = 0x00F0/4 // Spurious Interrupt Vector
+};
+
+enum lapic_table lapic_t;
+
+struct icr_low icr_l;
+struct icr_high icr_h;
+
 
 
 //PAGEBREAK!
 static void
 lapicw(int index, int value)
 {
-	int a;
   lapic[index] = value;
-  a = lapic[ID];  // wait for write to finish, by reading
-  a++;
+  lapic[ID];  // wait for write to finish, by reading
 }
 
-void
+/*void
 lapicinit(void)
 {
   if(!lapic)
@@ -99,14 +97,15 @@ lapicinit(void)
   lapicw(EOI, 0);
 
   // Send an Init Level De-Assert to synchronise arbitration ID's.
-  lapicw(ICRHI, 0);
-  lapicw(ICRLO, BCAST | INIT | LEVEL);
-  while(lapic[ICRLO] & DELIVS)
+  //lapicw(icr_high_addr, 0);
+  //lapicw(icr_low_addr, BCAST | INIT | LEVEL);  
+
+while(lapic[ICRLO] & DELIVS)
     ;
 
   // Enable interrupts on the APIC (but not on the processor).
-  lapicw(TPR, 0);
-}
+  lapicw(lapic_t.TPR, 0);
+}*/
 
 
 
