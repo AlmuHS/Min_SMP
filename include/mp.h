@@ -24,46 +24,41 @@ struct cpu {
     uint8 apic_id;
 };
 
-struct icr_high{
-	uint32 reserved:24;
-	uint8 dest:8;
-};
-
 
 enum type_enum{
-	Fixed = 0b000,
-	LowestPriority = 0b001,
-	SMI = 0b010,
-	NMI = 0b100,
-	INIT = 0b101,
-	StartUp = 0b110
+	Fixed = 0x0,
+	LowestPriority = 0x1,
+	SMI = 0x2,
+	NMI = 0x4,
+	INIT = 0x5,
+	StartUp = 0x6
 };
 
 enum dest_mode_enum{
-	Physical = 0b0,
-	Logical = 0b1
+	Physical = 0x0,
+	Logical = 0x1
 };
 
 enum deliv_status_enum{
-	Idle = 0b0,
-	SendPending = 0b1
+	Idle = 0x0,
+	SendPending = 0x1
 };
 
 enum level_enum{
-	De_assert = 0b0,
-	Assert = 0b1
+	De_assert = 0x0,
+	Assert = 0x1
 };
 
 enum trig_mode_enum{
-	Edge = 0b0,
-	Level = 0b1
+	Edge = 0x0,
+	Level = 0x1
 };
 
 enum dest_sh_enum{
-	NoShortHand = 0b00,
-	Self = 0b01,
-	AllIncludingSelf = 0b10,
-	AllExcludingSelf = 0b11
+	NoShortHand = 0x0,
+	Self = 0x1,
+	AllIncludingSelf = 0x2,
+	AllExcludingSelf = 0x3;
 };
 
 struct icr_low{
@@ -79,11 +74,20 @@ struct icr_low{
 	uint16 reserved3:12;
 };
 
+struct icr_high{
+	uint32 reserved:24;
+	uint8 dest:8;
+};
+
+
 int mp_setup();
 
 void mp_print_info();
 
 int16 cpu_number();
+
+void send_IPI(struct icr_high icr_h, struct icr_low icr_l);
+
 
 
 #endif /* __MP_H__ */
