@@ -108,47 +108,8 @@ lapicinit(void)
   lapicw(TPR, 0);
 }
 
-#define CMOS_PORT    0x70
-#define CMOS_RETURN 0x71
 
 
-// Start additional processor running entry code at addr.
-// See Appendix B of MultiProcessor Specification.
-/*void
-lapicstartap(uint8 apicid, uint16 addr)
-{
-  int i;
-  ushort *wrv;
-
-  // "The BSP must initialize CMOS shutdown code to 0AH
-  // and the warm reset vector (DWORD based at 40:67) to point at
-  // the AP startup code prior to the [universal startup algorithm]."
-  outb(CMOS_PORT, 0xF);  // offset 0xF is shutdown code
-  outb(CMOS_PORT+1, 0x0A);
-  wrv = (ushort*)P2V((0x40<<4 | 0x67));  // Warm reset vector
-  wrv[0] = 0;
-  wrv[1] = addr >> 4;
-
-  // "Universal startup algorithm."
-  // Send INIT (level-triggered) interrupt to reset other CPU.
-  lapicw(ICRHI, apicid<<24);
-  lapicw(ICRLO, INIT | LEVEL | ASSERT);
-  microdelay(200);
-  lapicw(ICRLO, INIT | LEVEL);
-  microdelay(100);    // should be 10ms, but too slow in Bochs!
-
-  // Send startup IPI (twice!) to enter code.
-  // Regular hardware is supposed to only accept a STARTUP
-  // when it is in the halted state due to an INIT.  So the second
-  // should be ignored, but it is part of the official Intel algorithm.
-  // Bochs complains about the second one.  Too bad for Bochs.
-  for(i = 0; i < 2; i++){
-    lapicw(ICRHI, apicid<<24);
-    lapicw(ICRLO, STARTUP | (addr>>12));
-    microdelay(200);
-  }
-}
-*/
 
 
 

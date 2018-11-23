@@ -33,8 +33,9 @@ extern void lapicstartap(uint8 apicid, uint16 addr);
 volatile struct icr_low* icr_low_addr = (struct icr_low*) 0xFEE00300;
 volatile struct icr_high* icr_high_addr = (struct icr_high*) 0xFEE00310;
 
-int
-mp_setup(){
+
+
+int mp_setup(){
 
 	//TODO: Start CPUs
 	//uint8 *code;
