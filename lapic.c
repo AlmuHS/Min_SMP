@@ -20,10 +20,10 @@
 volatile uint16* lapic;
 
 // Local APIC registers, divided by 4 for use as uint[] indices.
-#define ID 0x0020/4, // ID
-#define VER = 0x0030/4, //Version
-#define TPR 0x0080/4, //Task Priority
-#define EOI 0x00B0/4,   // EOI
+#define ID 0x0020/4 // ID
+#define VER = 0x0030/4 //Version
+#define TPR 0x0080/4 //Task Priority
+#define EOI 0x00B0/4   // EOI
 #define SVR 0x00F0/4 // Spurious Interrupt Vector
   #define ENABLE     0x00000100   // Unit Enable
 #define ESR     (0x0280/4)   // Error Status
@@ -42,10 +42,8 @@ volatile uint16* lapic;
 #define TDCR (0x03E0/4) // Timer Divide Configuration
 
 
-
 struct icr_low icr_l;
 struct icr_high icr_h;
-
 
 
 //PAGEBREAK!
