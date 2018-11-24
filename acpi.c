@@ -217,7 +217,7 @@ acpi_apic_setup(){
 
     ncpu = 0;
     nioapic = 0;
-    lapic = (uint32*) apic->lapic_addr;
+    lapic = (uint16*) apic->lapic_addr;
     list_init(&ioapics);
     struct acpi_apic_dhdr *apic_entry = apic->entry;
     uint32 end = (uint32) apic + apic->header.length;
