@@ -61,16 +61,23 @@ enum dest_sh_enum{
 };
  	
 
+typedef enum type_enum type_t;
+typedef enum dest_mode_enum dest_mode_t;
+typedef enum deliv_status_enum deliv_status_t;
+typedef enum level_enum level_t;
+typedef enum trig_mode_enum trig_mode_t;
+typedef enum dest_sh_enum dest_sh_t;
+
 struct icr_low{
 	uint8 vector:8;
-	enum type_enum type:3;
-	enum dest_mode_enum dest_mode:1;
-	enum deliv_status_enum deliv_status:1;
+	type_t type:3;
+	dest_mode_t dest_mode:1;
+	deliv_status_t deliv_status:1;
 	uint8 reserved1:1;
-	enum level_enum level:1;
-	enum trig_mode_enum trigger_mode:1;
+	level_t level:1;
+	trig_mode_t trigger_mode:1;
 	uint8 reserved2:2;
-	enum dest_sh_enum dest_shorthand:2;
+	dest_sh_t dest_shorthand:2;
 	uint16 reserved3:12;
 };
 
