@@ -1,4 +1,4 @@
-/*Copyright 2018 Juan Bosco Garcia
+/*Copyright 2018 Juan Bosco Garcia, Almudena Garcia Jurado-Centurion
  *This file is part of Min_SMP. 
  *Min_SMP is free software: you can redistribute it and/or modify
  *it under the terms of the GNU General Public License as published by
@@ -20,7 +20,11 @@
 volatile uint16* lapic;
 
 // Local APIC registers, divided by 4 for use as uint[] indices.
-//#define SVR     (0x00F0/4)   // Spurious Interrupt Vector
+#define ID 0x0020/4, // ID
+#define VER = 0x0030/4, //Version
+#define TPR 0x0080/4, //Task Priority
+#define EOI 0x00B0/4,   // EOI
+#define SVR 0x00F0/4 // Spurious Interrupt Vector
   #define ENABLE     0x00000100   // Unit Enable
 #define ESR     (0x0280/4)   // Error Status
 
@@ -37,15 +41,7 @@ volatile uint16* lapic;
 #define TCCR    (0x0390/4)   // Timer Current Count
 #define TDCR (0x03E0/4) // Timer Divide Configuration
 
-enum lapic_table{
-	ID = 0x0020/4, // ID
-	VER = 0x0030/4, //Version
-	TPR = 0x0080/4, //Task Priority
-	EOI = 0x00B0/4,   // EOI
-	SVR = 0x00F0/4 // Spurious Interrupt Vector
-};
 
-enum lapic_table lapic_t;
 
 struct icr_low icr_l;
 struct icr_high icr_h;
@@ -53,12 +49,12 @@ struct icr_high icr_h;
 
 
 //PAGEBREAK!
-/*static void
+static void
 lapicw(int index, int value)
 {
   lapic[index] = value;
   lapic[ID];  // wait for write to finish, by reading
-}*/
+}
 
 /*void
 lapicinit(void)
@@ -104,7 +100,7 @@ while(lapic[ICRLO] & DELIVS)
     ;
 
   // Enable interrupts on the APIC (but not on the processor).
-  lapicw(lapic_t.TPR, 0);
+  lapicw(TPR, 0);
 }*/
 
 
