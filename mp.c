@@ -22,7 +22,7 @@
 int ncpu;
 struct cpu cpus[NCPU];
 
-extern volatile uint32 lapic;
+extern volatile uint16* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
