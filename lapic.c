@@ -17,7 +17,7 @@
 #include <traps.h>
 #include <mp.h>
 
-volatile uint32* lapic;
+volatile uint16* lapic;
 
 // Local APIC registers, divided by 4 for use as uint[] indices.
 //#define SVR     (0x00F0/4)   // Spurious Interrupt Vector
@@ -53,12 +53,12 @@ struct icr_high icr_h;
 
 
 //PAGEBREAK!
-static void
+/*static void
 lapicw(int index, int value)
 {
   lapic[index] = value;
   lapic[ID];  // wait for write to finish, by reading
-}
+}*/
 
 /*void
 lapicinit(void)
