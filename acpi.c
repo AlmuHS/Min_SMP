@@ -1,4 +1,4 @@
-/*Copyright 2018 Juan Bosco Garcia
+/*Copyright 2018 Juan Bosco Garcia, Almudena Garcia Jurado-Centurion
  *This file is part of Min_SMP. 
  *Min_SMP is free software: you can redistribute it and/or modify
  *it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ static int acpi_get_rsdt();
 
 static int acpi_apic_setup();
 extern int ncpu;
-extern volatile uint32* lapic;
+extern volatile uint16* lapic;
 extern struct cpu cpus[];
 
 extern int nioapic;
