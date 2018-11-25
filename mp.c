@@ -27,10 +27,18 @@ extern uint32 nioapic;
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
 
-volatile struct icr_low* icr_low_addr = (struct icr_low*) 0xFEE00300;
-volatile struct icr_high* icr_high_addr = (struct icr_high*) 0xFEE00310;
+volatile icrl* icr_low_addr = (icrl*) 0xFEE00300;
+volatile icrh* icr_high_addr = (icrh*) 0xFEE00310;
 
 
+#define VECTOR 0xFEE00300
+#define DELIVMODE 0xFEE00308
+#define DESTMODE 0xFEE0030A
+#define DELIVSTATUS 0xFEE0030B
+#define LEVEL 0xFEE0030D
+#define TRIGMODE 0xFEE0030E
+#define DESTSH 0xFEE00312
+#define DEST 0xFEE00348
 
 int mp_setup(){
 
@@ -72,8 +80,7 @@ mp_print_info(){
 }
 
 int16 cpu_number(){
-	uint16 apic_id;
-	int i = 0;
+	uint16 apic_id, i = 0;
 	
 	//Read apic id from the current cpu, using its lapic
 	apic_id = *(uint16*) (lapic+3);
@@ -87,8 +94,35 @@ int16 cpu_number(){
 }
 
 
-void send_IPI(struct icr_high icr_h, struct icr_low icr_l){
+void write_icr_type(type_t type){
+	icr_low_addr->type = type;
+}
+
+void write_icr_destmode(dest_mode_t dm){
+	icr_low_addr->dest_mode = dm;
+}
+
+void write_icr_level(level_t level){
+	icr_low_addr->level = level;
+}
+
+void write_icr_trigmode(trig_mode_t trigger_mode){
+	icr_low_addr->trigger_mode = trigger_mode;
+}
+
+void write_icr_destsh(dest_sh_t dest_sh){
+	icr_low_addr->dest_shorthand = dest_sh;
+}
+
+void write_icr_dest(uint8 dest){
+	icr_high_addr->dest = dest;
+}
+
+void send_IPI(icrh icr_h, icrl icr_l){	
 	*icr_low_addr = icr_l;
 	*icr_high_addr = icr_h;
 }
+
+
+
 
