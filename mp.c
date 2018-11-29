@@ -50,6 +50,8 @@ int mp_setup(){
 	//	lapicstartap(cpus[i].apic_id, 0x7000);
 	//}
 
+	startup_cpu(cpus[1].apic_id);
+
     return 0;
 }
 
@@ -79,11 +81,26 @@ mp_print_info(){
 
 }
 
+
+void startup_cpu(uint8 apic_id){
+	icrl icr_l;
+	icrh icr_h;
+
+	icr_h.dest = apic_id;
+	icr_l.type = StartUp;
+	icr_l.dest_mode = Physical;
+	icr_l.dest_shorthand = NoShortHand;
+
+	send_IPI(icr_h, icr_l);
+}
+
 int16 cpu_number(){
 	uint16 apic_id, i = 0;
 	
 	//Read apic id from the current cpu, using its lapic
-	apic_id = *(uint16*) (lapic+3);
+	apic_id = *(uint16*) (&lapic+2);
+
+	printf("apic id: %x ", apic_id);
 
 	//Search apic id in cpu2apic vector
 	while(cpus[i].apic_id != apic_id && i < ncpu) i = i+1;

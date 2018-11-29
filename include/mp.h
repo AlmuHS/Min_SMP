@@ -19,45 +19,46 @@
 
 #define NCPU 128
 
+
 struct cpu {
     uint8 apic_id;
 };
 
 
 enum type_enum{
-	Fixed = 0x0,
-	LowestPriority = 0x1,
-	SMI = 0x2,
-	NMI = 0x4,
-	INIT = 0x5,
-	StartUp = 0x6
+	Fixed = 0b000,
+	LowestPriority = 0b001,
+	SMI = 0b010,
+	NMI = 0b011,
+	INIT = 0b101,
+	StartUp = 0b110
 };
 
 enum dest_mode_enum{
-	Physical = 0x0,
-	Logical = 0x1
+	Physical = 0b0,
+	Logical = 0b1
 };
 
 enum deliv_status_enum{
-	Idle = 0x0,
-	SendPending = 0x1
+	Idle = 0b0,
+	SendPending = 0b1
 };
 
 enum level_enum{
-	De_assert = 0x0,
-	Assert = 0x1
+	De_assert = 0b0,
+	Assert = 0b1
 };
 
 enum trig_mode_enum{
-	Edge = 0x0,
-	Level = 0x1
+	Edge = 0b0,
+	Level = 0b1
 };
 
 enum dest_sh_enum{
-	NoShortHand = 0x0,
-	Self = 0x1,
-	AllIncludingSelf = 0x2,
-	AllExcludingSelf = 0x3
+	NoShortHand = 0b00,
+	Self = 0b01,
+	AllIncludingSelf = 0b10,
+	AllExcludingSelf = 0b11
 };
  	
 
@@ -86,8 +87,12 @@ struct icr_high{
 	uint8 dest:8;
 };
 
+typedef struct icr_low icrl;
+typedef struct icr_high icrh;
 
 int mp_setup();
+
+void startup_cpu(uint8 apic_id);
 
 void mp_print_info();
 
