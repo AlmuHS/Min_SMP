@@ -98,14 +98,12 @@ void startup_cpu(uint8 apic_id){
 	icr_l.vector = 0x7000 >> 12;
 
 
-	icr_l.type = INIT;
+	icr_l.type = StartUp;
 
 	send_IPI(icr_h, icr_l);
 
 	
 	while(i < 100) i++;
-
-	icr_l.type = StartUp;
 
 	//send_IPI(icr_h, icr_l);
 	write_icr_type(StartUp);
