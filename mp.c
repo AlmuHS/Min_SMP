@@ -41,7 +41,7 @@ volatile icrh* icr_high_addr = (icrh*) 0xFEE00310;
 #define DEST 0xFEE00348
 
 int mp_setup(){
-	int n, c, d;
+	int n;
 
 	//TODO: Start CPUs
 	//uint8 *code;
@@ -56,11 +56,6 @@ int mp_setup(){
 
 	startup_cpu(cpus[n].apic_id);
 	
-	for (c = 1; c <= 32767; c++){
-       		for (d = 1; d <= 32767; d++);
-	}
-
-	startup_cpu(cpus[n].apic_id);
 	
     return 0;
 }
@@ -92,17 +87,33 @@ mp_print_info(){
 }
 
 
-void startup_cpu(uint8 apic_id){
+void startup_cpu(uint8 apic_id){	
 	icrl icr_l;
 	icrh icr_h;
+	int i = 0;
 
-	icr_h.dest = apic_id;
-	icr_l.type = StartUp;
+	icr_h.dest = apic_id;	
 	icr_l.dest_mode = Physical;
 	icr_l.dest_shorthand = NoShortHand;
 	icr_l.vector = 0x7000 >> 12;
 
+
+	icr_l.type = INIT;
+
 	send_IPI(icr_h, icr_l);
+
+	
+	while(i < 100) i++;
+
+	icr_l.type = StartUp;
+
+	//send_IPI(icr_h, icr_l);
+	write_icr_type(StartUp);
+	
+
+	i = 0;
+	while(i < 5000) i++;
+
 }
 
 int16 cpu_number(){
@@ -112,10 +123,10 @@ int16 cpu_number(){
 	//Read apic id from the current cpu, using its lapic
 	
 	/* Each pointer register is 2 bytes (16 bits). Each field fill 16 memory position (1 byte/position)
-	   Then, to skip to second field (16 bytes, one jump), we have to multiply pointer size (2 bytes) x 8   
+	   Then, to skip to 3th field (16 bytes, two jumps), we have to multiply number of jumps (2 jumps) x 8 = 16
 	*/
 	
-	apicid_ptr = lapic+16; //2 position (1 byte/position) x 8 bits	
+	apicid_ptr = lapic+16; //2 jumps (1 byte/position) x 8 bits	
 	apic_id = *apicid_ptr;
 
 	printf("lapic: %x ", apicid_ptr);

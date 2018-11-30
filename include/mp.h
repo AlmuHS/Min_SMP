@@ -98,6 +98,13 @@ void mp_print_info();
 
 int16 cpu_number();
 
+void write_icr_type(type_t type);
+void write_icr_destmode(dest_mode_t dm);
+void write_icr_level(level_t level);
+void write_icr_trigmode(trig_mode_t trigger_mode);
+void write_icr_destsh(dest_sh_t dest_sh);
+void write_icr_dest(uint8 dest);
+
 void send_IPI(struct icr_high icr_h, struct icr_low icr_l);
 
 

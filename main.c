@@ -30,7 +30,7 @@ main(){
 
     if(acpi_setup()){
         puts("ACPI error");
-        goto idle;
+        //goto idle;
     }
     if(mp_setup()){
         puts("MP error");
@@ -43,16 +43,13 @@ main(){
     acpi_print_info();
     mp_print_info();
 
-	lapicinit();
+	//lapicinit();
 
-	while(i < 10){
+	while(i < 5){
 		kernel_id = cpu_number();
 		printf("Current CPU: cpu %x\n", kernel_id&0xff); 
 		i++;
 	}
-
-
-
 
 
 idle:
