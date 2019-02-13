@@ -30,7 +30,7 @@ main(){
 
     if(acpi_setup()){
         puts("ACPI error");
-        //goto idle;
+        goto idle;
     }
     if(mp_setup()){
         puts("MP error");
@@ -55,6 +55,5 @@ main(){
 idle:
     for(;;)
         __asm__("hlt;");
-
 
 }
