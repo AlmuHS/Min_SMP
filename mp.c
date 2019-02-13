@@ -18,6 +18,8 @@
 #include <list.h>
 #include <mem.h>
 
+#define AP_BOOT_ADDR (0x7000)
+
 int ncpu;
 struct cpu cpus[NCPU];
 
@@ -29,7 +31,7 @@ int mp_setup(){
 
 	//TODO: Start CPUs
 	
-    for(int i = 0; i < ncpu; i++){
+    for(int i = 1; i < ncpu; i++){
 	    startup_cpu(cpus[i].apic_id);
     }
 	
@@ -68,33 +70,37 @@ void startup_cpu(uint8 apic_id){
 	icrl icr_l;
 	icrh icr_h;
 	int i = 0;
-
-	icr_h.dest = apic_id;	
-	icr_l.dest_mode = Physical;
-	icr_l.dest_shorthand = NoShortHand;
-	icr_l.vector = 0x70;
+	uint8 id;
 	
-	lapic->apic_id.r;
-	
-	icr_l.type = INIT;
-	icr_l.level = Assert;	
+	icr_h.dest = apic_id & 0x0;	
+	icr_l.dest_mode = Physical & 0x0;
+	icr_l.dest_shorthand = NoShortHand & 0x0;
+	icr_l.vector = AP_BOOT_ADDR >>12 & 0x0;
+	icr_l.type = INIT & 0x0;
+	icr_l.level = Assert & 0x0;	
 
 	send_IPI(icr_h, icr_l);
+	id = lapic->apic_id.r;	
 
 	while(i < 100) i++;
 
-	icr_l.level = De_assert;
-
+	icr_l.level = De_assert & 0x0;
 	send_IPI(icr_h, icr_l);
+	id = lapic->apic_id.r;	
 
 	i = 0;
 	while(i < 5000) i++;
 
-    icr_l.type = StartUp;
-    icr_l.level = Assert;	
+    	icr_l.type = StartUp & 0x0;
+    	icr_l.level = Assert & 0x0;	
 
-    send_IPI(icr_h, icr_l);
-
+    	send_IPI(icr_h, icr_l);
+	id = lapic->apic_id.r;
+	
+	send_IPI(icr_h, icr_l);
+	id = lapic->apic_id.r;
+	
+	id++;
 }
 
 int16 cpu_number(){
@@ -142,7 +148,7 @@ void write_icr_dest(uint8 dest){
 
 void send_IPI(icrh icr_h, icrl icr_l){	
 	lapic->icr_low.r = icr_l;
-	lapic->icr_high.r = icr_h;
+	lapic->icr_high.r = icr_h ;
 }
 
 
