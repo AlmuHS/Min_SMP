@@ -21,13 +21,10 @@
 int ncpu;
 struct cpu cpus[NCPU];
 
-extern volatile uint16* lapic;
+extern volatile ApicLocalUnit* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
-
-volatile icrl* icr_low_addr = (icrl*) 0xFEE00300;
-volatile icrh* icr_high_addr = (icrh*) 0xFEE00310;
 
 
 #define VECTOR 0xFEE00300
@@ -115,20 +112,13 @@ void startup_cpu(uint8 apic_id){
 
 int16 cpu_number(){
 	uint16 apic_id, i = 0;
-	volatile uint16* apicid_ptr;	
 
 	//Read apic id from the current cpu, using its lapic
 	
-	/* Each pointer register is 2 bytes (16 bits). Each field fill 16 memory position (1 byte/position)
-	   Then, to skip to 3th field (16 bytes, two jumps), we have to multiply number of jumps (2 jumps) x 8 = 16
-	*/
-	
-	apicid_ptr = lapic+16; //2 jumps (1 byte/position) x 8 bits 
-	apic_id = *apicid_ptr;
-
-	printf("lapic: %x ", apicid_ptr);
+	apic_id = lapic->apic_id.r;
 
 	printf("apic id: %x ", apic_id);
+	printf("version: %x ", lapic->version.r);
 
 	//Search apic id in cpu2apic vector
 	while(cpus[i].apic_id != apic_id && i < ncpu) i = i+1;
@@ -140,32 +130,32 @@ int16 cpu_number(){
 
 
 void write_icr_type(icr_type type){
-	icr_low_addr->type = type;
+	lapic->icr_low.r.type = type;
 }
 
 void write_icr_destmode(icr_dest_mode dm){
-	icr_low_addr->dest_mode = dm;
+	lapic->icr_low.r.dest_mode = dm;
 }
 
 void write_icr_level(icr_level level){
-	icr_low_addr->level = level;
+	lapic->icr_low.r.level = level;
 }
 
 void write_icr_trigmode(icr_trig_mode trigger_mode){
-	icr_low_addr->trigger_mode = trigger_mode;
+	lapic->icr_low.r.trigger_mode = trigger_mode;
 }
 
 void write_icr_destsh(icr_dest_sh dest_sh){
-	icr_low_addr->dest_shorthand = dest_sh;
+	lapic->icr_low.r.dest_shorthand = dest_sh;
 }
 
 void write_icr_dest(uint8 dest){
-	icr_high_addr->dest = dest;
+	lapic->icr_high.r.dest = dest;
 }
 
 void send_IPI(icrh icr_h, icrl icr_l){	
-	*icr_low_addr = icr_l;
-	*icr_high_addr = icr_h;
+	lapic->icr_low.r = icr_l;
+	lapic->icr_high.r = icr_h;
 
 }
 
