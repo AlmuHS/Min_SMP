@@ -26,16 +26,6 @@ extern uint32 nioapic;
 extern struct list ioapics;
 extern void lapicstartap(uint8 apicid, uint16 addr);
 
-
-#define VECTOR 0xFEE00300
-#define DELIVMODE 0xFEE00308
-#define DESTMODE 0xFEE0030A
-#define DELIVSTATUS 0xFEE0030B
-#define LEVEL 0xFEE0030D
-#define TRIGMODE 0xFEE0030E
-#define DESTSH 0xFEE00312
-#define DEST 0xFEE00348
-
 int mp_setup(){
 	int n;
 
@@ -43,9 +33,9 @@ int mp_setup(){
 	//uint8 *code;
 	//code = P2V(0x7000);
 	
-	//for(int i = 0; i < ncpu; i++){
-	//	lapicstartap(cpus[i].apic_id, 0x7000);
-	//}
+	for(int i = 0; i < ncpu; i++){
+		startup_cpu(cpus[i].apic_id);
+	}
 
 	if(cpu_number() == 1) n = 0;
 	else n = 1;
@@ -92,18 +82,27 @@ void startup_cpu(uint8 apic_id){
 	icr_l.dest_mode = Physical;
 	icr_l.dest_shorthand = NoShortHand;
 	icr_l.vector = 0x7E00 >> 12;
-
-
+	
+	lapic->apic_id.r;
+	
 	icr_l.type = INIT;
+	icr_l.level = Assert;	
 
 	send_IPI(icr_h, icr_l);
+
+	icr_l.level = De_assert;
+
+	send_IPI(icr_h, icr_l);
+
+	//icr_l.type = StartUp;
+
+	//send_IPI(icr_h, icr_l);
 
 	
 	while(i < 100) i++;
 
-	send_IPI(icr_h, icr_l);
-	write_icr_type(StartUp);
 	
+	send_IPI(icr_h, icr_l);
 
 	i = 0;
 	while(i < 5000) i++;
@@ -156,7 +155,6 @@ void write_icr_dest(uint8 dest){
 void send_IPI(icrh icr_h, icrl icr_l){	
 	lapic->icr_low.r = icr_l;
 	lapic->icr_high.r = icr_h;
-
 }
 
 
