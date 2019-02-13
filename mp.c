@@ -24,7 +24,6 @@ struct cpu cpus[NCPU];
 extern volatile ApicLocalUnit* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
-extern void lapicstartap(uint8 apicid, uint16 addr);
 
 int mp_setup(){
 	int n;
