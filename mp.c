@@ -13,7 +13,6 @@
  */
 
 #include <mp.h>
-#include <lapic.h>
 #include <ioapic.h>
 #include <video.h>
 #include <list.h>
@@ -95,17 +94,17 @@ void startup_cpu(uint8 apic_id){
 	icr_h.dest = apic_id;	
 	icr_l.dest_mode = Physical;
 	icr_l.dest_shorthand = NoShortHand;
-	icr_l.vector = 0x7000 >> 12;
+	icr_l.vector = 0x7E00 >> 12;
 
 
-	icr_l.type = StartUp;
+	icr_l.type = INIT;
 
 	send_IPI(icr_h, icr_l);
 
 	
 	while(i < 100) i++;
 
-	//send_IPI(icr_h, icr_l);
+	send_IPI(icr_h, icr_l);
 	write_icr_type(StartUp);
 	
 
@@ -124,7 +123,7 @@ int16 cpu_number(){
 	   Then, to skip to 3th field (16 bytes, two jumps), we have to multiply number of jumps (2 jumps) x 8 = 16
 	*/
 	
-	apicid_ptr = lapic+16; //2 jumps (1 byte/position) x 8 bits	
+	apicid_ptr = lapic+16; //2 jumps (1 byte/position) x 8 bits 
 	apic_id = *apicid_ptr;
 
 	printf("lapic: %x ", apicid_ptr);
@@ -140,23 +139,23 @@ int16 cpu_number(){
 }
 
 
-void write_icr_type(type_t type){
+void write_icr_type(icr_type type){
 	icr_low_addr->type = type;
 }
 
-void write_icr_destmode(dest_mode_t dm){
+void write_icr_destmode(icr_dest_mode dm){
 	icr_low_addr->dest_mode = dm;
 }
 
-void write_icr_level(level_t level){
+void write_icr_level(icr_level level){
 	icr_low_addr->level = level;
 }
 
-void write_icr_trigmode(trig_mode_t trigger_mode){
+void write_icr_trigmode(icr_trig_mode trigger_mode){
 	icr_low_addr->trigger_mode = trigger_mode;
 }
 
-void write_icr_destsh(dest_sh_t dest_sh){
+void write_icr_destsh(icr_dest_sh dest_sh){
 	icr_low_addr->dest_shorthand = dest_sh;
 }
 
@@ -167,8 +166,6 @@ void write_icr_dest(uint8 dest){
 void send_IPI(icrh icr_h, icrl icr_l){	
 	*icr_low_addr = icr_l;
 	*icr_high_addr = icr_h;
-	//memcpy(icr_low_addr, icr_l, 5);
-	//memcpy(icr_high_addr, icr_h, 5);
 
 }
 
