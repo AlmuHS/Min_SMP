@@ -26,21 +26,12 @@ extern uint32 nioapic;
 extern struct list ioapics;
 
 int mp_setup(){
-	int n;
 
 	//TODO: Start CPUs
-	//uint8 *code;
-	//code = P2V(0x7000);
 	
-	for(int i = 0; i < ncpu; i++){
-		startup_cpu(cpus[i].apic_id);
-	}
-
-	if(cpu_number() == 1) n = 0;
-	else n = 1;
-
-	startup_cpu(cpus[n].apic_id);
-	
+    for(int i = 0; i < ncpu; i++){
+	    startup_cpu(cpus[i].apic_id);
+    }
 	
     return 0;
 }
@@ -54,6 +45,7 @@ mp_print_info(){
 
     printf("CPU:\n");
     int i;
+
     for(i=0;i<ncpu;i++){
         printf(" cpu %x: apic_id = %x\n", i, cpus[i].apic_id);
     }
@@ -80,7 +72,7 @@ void startup_cpu(uint8 apic_id){
 	icr_h.dest = apic_id;	
 	icr_l.dest_mode = Physical;
 	icr_l.dest_shorthand = NoShortHand;
-	icr_l.vector = 0x7E00 >> 12;
+	icr_l.vector = 0x70;
 	
 	lapic->apic_id.r;
 	
@@ -89,22 +81,19 @@ void startup_cpu(uint8 apic_id){
 
 	send_IPI(icr_h, icr_l);
 
+	while(i < 100) i++;
+
 	icr_l.level = De_assert;
 
 	send_IPI(icr_h, icr_l);
 
-	//icr_l.type = StartUp;
-
-	//send_IPI(icr_h, icr_l);
-
-	
-	while(i < 100) i++;
-
-	
-	send_IPI(icr_h, icr_l);
-
 	i = 0;
 	while(i < 5000) i++;
+
+    icr_l.type = StartUp;
+    icr_l.level = Assert;	
+
+    send_IPI(icr_h, icr_l);
 
 }
 
