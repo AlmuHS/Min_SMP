@@ -18,7 +18,7 @@
 #include <list.h>
 #include <mem.h>
 
-#define AP_BOOT_ADDR (0x7000)
+#define AP_BOOT_ADDR (0x7000)	
 
 int ncpu;
 struct cpu cpus[NCPU];
@@ -26,11 +26,13 @@ struct cpu cpus[NCPU];
 extern volatile ApicLocalUnit* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
+extern void* *apboot, *apbootend;
 
 int mp_setup(){
 
-	//TODO: Start CPUs
-	
+    //TODO: Start CPUs
+    memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
+
     for(int i = 1; i < ncpu; i++){
 	    startup_cpu(cpus[i].apic_id);
     }
@@ -70,8 +72,7 @@ void startup_cpu(uint8 apic_id){
 	icrl icr_l;
 	icrh icr_h;
 	int i = 0;
-	uint8 id;
-	
+
 	icr_h.dest = apic_id & 0x0;	
 	icr_l.dest_mode = Physical & 0x0;
 	icr_l.dest_shorthand = NoShortHand & 0x0;
@@ -80,13 +81,13 @@ void startup_cpu(uint8 apic_id){
 	icr_l.level = Assert & 0x0;	
 
 	send_IPI(icr_h, icr_l);
-	id = lapic->apic_id.r;	
+	lapic->apic_id.r;	
 
 	while(i < 100) i++;
 
 	icr_l.level = De_assert & 0x0;
 	send_IPI(icr_h, icr_l);
-	id = lapic->apic_id.r;	
+	lapic->apic_id.r;	
 
 	i = 0;
 	while(i < 5000) i++;
@@ -95,12 +96,11 @@ void startup_cpu(uint8 apic_id){
     	icr_l.level = Assert & 0x0;	
 
     	send_IPI(icr_h, icr_l);
-	id = lapic->apic_id.r;
+	lapic->apic_id.r;
 	
 	send_IPI(icr_h, icr_l);
-	id = lapic->apic_id.r;
+	lapic->apic_id.r;
 	
-	id++;
 }
 
 int16 cpu_number(){
