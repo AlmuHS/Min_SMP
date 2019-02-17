@@ -41,10 +41,11 @@ clean:
 	@cd include && rm -rf *~ .*~ && cd ..
 
 qemu: $(PROG)
-	qemu-system-x86_64 -m 512 -enable-kvm \
+	qemu-system-i386 -m 512 -enable-kvm \
 		-smp 2 \
 		-kernel $(PROG) \
-		-curses
+		-curses		\
+		-cpu coreduo
 
 debug: $(PROG)
 	qemu-system-i386 -m 512 -enable-kvm \
