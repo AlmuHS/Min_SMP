@@ -37,53 +37,16 @@ typedef struct ApicIoUnit
 	ApicReg window;
 } ApicIoUnit;
 
-typedef enum type_enum{
-	Fixed = 0b000,
-	LowestPriority = 0b001,
-	SMI = 0b010,
-	NMI = 0b011,
-	INIT = 0b101,
-	StartUp = 0b110
-} icr_type;
-
-typedef enum dest_mode_enum{
-	Physical = 0b0,
-	Logical = 0b1
-} icr_dest_mode;
-
-typedef enum deliv_status_enum{
-	Idle = 0b0,
-	SendPending = 0b1
-} icr_deliv_status;
-
-typedef enum level_enum{
-	De_assert = 0b0,
-	Assert = 0b1
-} icr_level; 
-
-typedef enum trig_mode_enum{
-	Edge = 0b0,
-	Level = 0b1
-} icr_trig_mode;
-
-typedef enum dest_sh_enum{
-	NoShortHand = 0b00,
-	Self = 0b01,
-	AllIncludingSelf = 0b10,
-	AllExcludingSelf = 0b11
-} icr_dest_sh;
- 	
-
 typedef struct icr_low{
-	uint8 vector:8;
-	icr_type type:3;
-	icr_dest_mode dest_mode:1;
-	icr_deliv_status deliv_status:1;
+	uint8 vector;
+	uint8 type:3;
+	uint8 dest_mode:1;
+	uint8 deliv_status:1;
 	uint8 reserved1:1;
-	icr_level level:1;
-	icr_trig_mode trigger_mode:1;
+	uint8 level:1;
+	uint8 trigger_mode:1;
 	uint8 reserved2:2;
-	icr_dest_sh dest_shorthand:2;
+	uint8 dest_shorthand:2;
 	uint16 reserved3:12;
 } icrl;
 

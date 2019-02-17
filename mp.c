@@ -42,13 +42,16 @@ int mp_setup(){
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
 
-    for(int i = 1; i < ncpu; i++){
+    for(i = 1; i < ncpu; i++){
 		#define STACK_SIZE (4096 * 2)
         *stack_ptr = malloc(STACK_SIZE);
 		cpus[i].stack_base = *stack_ptr;
 
 	    startup_cpu(cpus[i].apic_id);
     }
+
+	volatile uint32 *flags_p = &cpus[i].flags;
+	while((*flags_p & CPU_ENABLE) == 0);
 	
     return 0;
 }
@@ -65,6 +68,8 @@ mp_print_info(){
 
     for(i=0;i<ncpu;i++){
         printf(" cpu %x: apic_id = %x\n", i, cpus[i].apic_id);
+        if(cpus[i].flags & CPU_ENABLE) printf(" ENABLE");
+        printf("\n");
     }
 
     printf("IOAPIC:\n");
@@ -84,35 +89,60 @@ mp_print_info(){
 void startup_cpu(uint8 apic_id){	
 	icrl icr_l;
 	icrh icr_h;
-	int i = 0;
 
-	icr_h.dest = apic_id & 0x0;	
-	icr_l.dest_mode = Physical & 0x0;
-	icr_l.dest_shorthand = NoShortHand & 0x0;
-	icr_l.vector = AP_BOOT_ADDR >>12 & 0x0;
-	icr_l.type = INIT & 0x0;
-	icr_l.level = Assert & 0x0;	
+	icr_h.dest = apic_id;	
 
-	send_IPI(icr_h, icr_l);
-	lapic->apic_id.r;	
-
-	while(i < 100) i++;
-
-	icr_l.level = De_assert & 0x0;
-	send_IPI(icr_h, icr_l);
-	lapic->apic_id.r;	
-
-	i = 0;
-	while(i < 5000) i++;
-
-    	icr_l.type = StartUp & 0x0;
-    	icr_l.level = Assert & 0x0;	
-
-    	send_IPI(icr_h, icr_l);
-	lapic->apic_id.r;
+    lapic->icr_low.r.dest_mode = Physical;
+    lapic->icr_low.r.dest_shorthand = NoShortHand;
+    lapic->icr_low.r.type = INIT;
+    lapic->icr_low.r.level = Assert;
+    lapic->icr_high.r.dest = apic_id;
+    //icr_l.dest_mode = Physical;
+	//icr_l.dest_shorthand = NoShortHand;
 	
+    //icr_l.type = INIT;
+	//icr_l.level = Assert;
+
+    //printf("\nIPI type: %x\n", icr_l.type);
+    
+
+	//send_IPI(icr_h, icr_l);
+
+    printf("\nIPI type: %x\n", lapic->icr_low.r.type);
+
+	lapic->apic_id.r;	
+
+    while(lapic->icr_low.r.deliv_status == 1){
+        printf("waiting to INIT assert IPI...\n");
+    };
+
+	icr_l.level = De_assert;
+	send_IPI(icr_h, icr_l);
+	lapic->apic_id.r;	
+
+    /*while(lapic->icr_low.r.deliv_status == 1){
+        printf("waiting to INIT deassert IPI...");
+    };*/
+
+    icr_l.type = StartUp;
+    icr_l.vector = AP_BOOT_ADDR >>12;
+    icr_l.level = Assert;	
+
+    send_IPI(icr_h, icr_l);
+	//lapic->apic_id.r;
+
+    /*while(lapic->icr_low.r.deliv_status == 1){
+        printf("waiting to Startup IPI...");
+    };*/
+
+    //printf("\nIPI type: %x\n", lapic->icr_low.r.type);
+    icr_l.vector = AP_BOOT_ADDR >>12;
 	send_IPI(icr_h, icr_l);
 	lapic->apic_id.r;
+
+    while(lapic->icr_low.r.deliv_status == 1){
+        printf("waiting to 2nd Startup IPI...");
+    };
 	
 }
 
@@ -121,7 +151,7 @@ int16 cpu_number(){
 
 	//Read apic id from the current cpu, using its lapic
 	
-	apic_id = lapic->apic_id.r;
+	apic_id = lapic->apic_id.r >>24;
 
 	printf("apic id: %x ", apic_id);
 	printf("version: %x ", lapic->version.r);
@@ -135,23 +165,27 @@ int16 cpu_number(){
 }
 
 
-void write_icr_type(icr_type type){
+void write_icr_type(uint8 type){
 	lapic->icr_low.r.type = type;
 }
 
-void write_icr_destmode(icr_dest_mode dm){
+void write_icr_destmode(uint8 dm){
 	lapic->icr_low.r.dest_mode = dm;
 }
 
-void write_icr_level(icr_level level){
+void write_icr_vector(uint8 vector){
+	lapic->icr_low.r.vector = vector;
+}
+
+void write_icr_level(uint8 level){
 	lapic->icr_low.r.level = level;
 }
 
-void write_icr_trigmode(icr_trig_mode trigger_mode){
+void write_icr_trigmode(uint8 trigger_mode){
 	lapic->icr_low.r.trigger_mode = trigger_mode;
 }
 
-void write_icr_destsh(icr_dest_sh dest_sh){
+void write_icr_destsh(uint8 dest_sh){
 	lapic->icr_low.r.dest_shorthand = dest_sh;
 }
 
@@ -161,7 +195,8 @@ void write_icr_dest(uint8 dest){
 
 void send_IPI(icrh icr_h, icrl icr_l){	
 	lapic->icr_low.r = icr_l;
-	lapic->icr_high.r = icr_h ;
+	lapic->icr_high.r = icr_h;
+    //printf("\nIPI type: %x\n", lapic->icr_low.r.type);
 }
 
 

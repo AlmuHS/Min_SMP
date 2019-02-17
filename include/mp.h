@@ -27,11 +27,12 @@ void mp_print_info();
 
 int16 cpu_number();
 
-void write_icr_type(icr_type type);
-void write_icr_destmode(icr_dest_mode dm);
-void write_icr_level(icr_level level);
-void write_icr_trigmode(icr_trig_mode trigger_mode);
-void write_icr_destsh(icr_dest_sh dest_sh);
+void write_icr_type(uint8 type);
+void write_icr_vector(uint8 vector);
+void write_icr_destmode(uint8 dm);
+void write_icr_level(uint8 level);
+void write_icr_trigmode(uint8 trigger_mode);
+void write_icr_destsh(uint8 dest_sh);
 void write_icr_dest(uint8 dest);
 
 void send_IPI(icrh icr_h, icrl icr_l);
