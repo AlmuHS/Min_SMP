@@ -109,22 +109,22 @@ mp_print_info(){
 void startup_cpu(uint8 apic_id){	    
 
     lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (PHYSICAL << 10) | (NO_SHORTHAND << 18) | (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
+    lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
     
 	lapic->apic_id.r;	
 
     lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (PHYSICAL << 10) | (NO_SHORTHAND << 18) | (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
+    lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
     
 	lapic->apic_id.r;	
 
     lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (PHYSICAL << 10) | (NO_SHORTHAND << 18) | (STARTUP << 8) | (ASSERT << 14) | (AP_BOOT_ADDR >>12);
+    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
     
 	lapic->apic_id.r;
 
     lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (PHYSICAL << 10) | (NO_SHORTHAND << 18) | (STARTUP << 8) | (ASSERT << 14) | (AP_BOOT_ADDR >>12);
+    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
     
 	lapic->apic_id.r;
 
