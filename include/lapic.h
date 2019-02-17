@@ -37,36 +37,6 @@ typedef struct ApicIoUnit
 	ApicReg window;
 } ApicIoUnit;
 
-typedef struct icr_low{
-	uint8 vector;
-	uint8 type:3;
-	uint8 dest_mode:1;
-	uint8 deliv_status:1;
-	uint8 reserved1:1;
-	uint8 level:1;
-	uint8 trigger_mode:1;
-	uint8 reserved2:2;
-	uint8 dest_shorthand:2;
-	uint16 reserved3:12;
-} icrl;
-
-typedef struct icr_high{
-	uint32 reserved:24;
-	uint8 dest:8;
-} icrh;
-
-typedef struct ApicICRHReg
-{
-	icrh r;	/* the actual register */
-	unsigned p[3];	/* pad to the next 128-bit boundary */
-} ApicICRHReg;
-
-typedef struct ApicICRLReg
-{
-	icrl r;	/* the actual register */
-	unsigned p[3];	/* pad to the next 128-bit boundary */
-} ApicICRLReg;
-
 
 #define APIC_IO_UNIT_ID			0x00
 #define APIC_IO_VERSION			0x01
@@ -97,8 +67,8 @@ typedef struct ApicLocalUnit
 	ApicReg error_status;
 	ApicReg reserved28[5];
 	ApicReg lvt_cmci;
-	ApicICRLReg icr_low;
-	ApicICRHReg icr_high;
+	ApicReg icr_low;
+	ApicReg icr_high;
 	ApicReg timer_vector;
 	ApicReg thermal_sensor;
 	ApicReg performance_monitor;
