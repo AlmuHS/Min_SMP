@@ -55,3 +55,16 @@ memcmp(void *ptr1, void *ptr2, uint32 size){
     return 0;
 }
 
+int
+memcpy(void *dest, void *src, uint32 size){
+    uint8 *d = dest;
+    uint8 *s = src;
+    unsigned int i;
+
+    for(i=0;i<size;i++){
+        d[i] = s[i];
+    }
+
+    return 0;
+}
+

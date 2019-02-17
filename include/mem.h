@@ -36,6 +36,8 @@ void* malloc(uint32);
 
 
 int memcmp(void*, void*, uint32);
+int memcpy(void *dest, void *src, uint32 size);
+   
 
 
 
