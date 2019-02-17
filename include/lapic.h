@@ -132,7 +132,8 @@ typedef struct ApicLocalUnit
 	ApicReg tmr[8];
 	ApicReg irr[8];
 	ApicReg error_status;
-	ApicReg reserved28[7];
+	ApicReg reserved28[5];
+	ApicReg lvt_cmci;
 	ApicICRLReg icr_low;
 	ApicICRHReg icr_high;
 	ApicReg timer_vector;
