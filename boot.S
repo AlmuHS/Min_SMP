@@ -13,6 +13,7 @@
  */
 
 
+
 #define MULTIBOOT_MAGIC 0x1badb002
 #define MULTIBOOT_FLAGS 0x0
 #define MULTIBOOT_CHECKSUM -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
@@ -45,7 +46,7 @@ _start:
     movw %ax, %es
 
     movw %ax, %ss
-    movl $(stack + STACK_SIZE), %esp
+    movl $(stack_bsp + STACK_SIZE), %esp
 
 
     /* first argument: multiboot */
@@ -59,6 +60,7 @@ _start:
     jmp 1b
 
     .section .rodata
+
     .align 0x10
 
     .globl idt_descr
@@ -106,6 +108,56 @@ gdt:
 
     .bss
     .p2align 4
-    .comm stack, STACK_SIZE
+    .globl stack_bsp
+    .comm stack_bsp, STACK_SIZE
 
+
+
+    .text
+    .globl apboot, apbootend, stack_ptr
+    .align 0x10
+    .code16
+apboot:
+_apboot:
+    cli
+1:
+    hlt
+    jmp 1b
+
+    
+    /* it this works? */
+    .code32
+    lgdtl gdt_descr
+    .code16
+
+    mov %cr0, %eax
+    or 0x1, %eax
+    mov %eax, %cr0
+
+    .code32
+    ljmpl $0x8, $1f
+1:
+    mov $0x10, %eax
+    movw %ax, %ds
+    movw %ax, %es
+
+    movw %ax, %ss
+    movl stack_ptr, %esp
+    addl $STACK_SIZE, %esp
+
+    lidtl idt_descr
+
+    pushl stack_ptr
+
+
+    cli
+1:
+    hlt
+    jmp 1b
+
+stack_ptr:
+    .long 0x0
+
+_apbootend:
+apbootend:
 
