@@ -20,8 +20,6 @@
 
 volatile ApicLocalUnit* lapic;
 
-struct icr_low icr_l;
-struct icr_high icr_h;
 
 
 
