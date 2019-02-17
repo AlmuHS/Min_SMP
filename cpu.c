@@ -5,6 +5,7 @@
 #include <video.h>
 #include <list.h>
 
+extern volatile ApicLocalUnit* lapic;
 
 int
 cpu_setup(){
@@ -18,7 +19,7 @@ cpu_setup(){
         return -1;
 
     /* assume Pentium 4, Xeon, or later processors */
-    cpus[i].apic_id = (get_lapic_id() >> 24) & 0xff;
+    cpus[i].apic_id = (lapic->apic_id.r >> 24) & 0xff;
     cpus[i].flags |= CPU_ENABLE;
 
     return 0;

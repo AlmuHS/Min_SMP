@@ -28,11 +28,25 @@ extern struct cpu cpus[NCPU];
 extern int ncpu;
 extern void* *apboot, *apbootend;
 
+extern void* *stack_ptr;
+
+extern void *stack_bsp;
+
 int mp_setup(){
+	int i=0;
+
+    /* setup BSP processor */
+	cpus[i].stack_base = &stack_bsp;
+
+	
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
 
     for(int i = 1; i < ncpu; i++){
+		#define STACK_SIZE (4096 * 2)
+        *stack_ptr = malloc(STACK_SIZE);
+		cpus[i].stack_base = *stack_ptr;
+
 	    startup_cpu(cpus[i].apic_id);
     }
 	
