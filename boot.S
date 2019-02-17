@@ -148,6 +148,7 @@ _apboot:
     lidtl idt_descr
 
     pushl stack_ptr
+	call cpu_ap_main
 
 
     cli

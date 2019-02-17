@@ -18,6 +18,7 @@
 #include <lapic.h>
 #include <ioapic.h>
 #include <mp.h>
+#include <cpu.h>
 
 struct acpi_rsdp *rsdp;
 struct acpi_rsdt *rsdt;
@@ -33,6 +34,7 @@ static int acpi_apic_setup();
 extern int ncpu;
 extern volatile uint16* lapic;
 extern struct cpu cpus[];
+extern int cpu;
 
 extern int nioapic;
 extern struct list ioapics;

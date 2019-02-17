@@ -17,19 +17,18 @@
 #include <video.h>
 #include <list.h>
 #include <mem.h>
+#include <cpu.h>
 
 #define AP_BOOT_ADDR (0x7000)	
-
-int ncpu;
-struct cpu cpus[NCPU];
 
 extern volatile ApicLocalUnit* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
+extern struct cpu cpus[NCPU];
+extern int ncpu;
 extern void* *apboot, *apbootend;
 
 int mp_setup(){
-
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
 

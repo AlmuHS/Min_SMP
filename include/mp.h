@@ -18,13 +18,6 @@
 #include <types.h>
 #include <lapic.h>
 
-#define NCPU 128
-
-
-struct cpu {
-    uint8 apic_id;
-};
-
 
 int mp_setup();
 

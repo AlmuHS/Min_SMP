@@ -1,4 +1,5 @@
 /*Copyright 2018 Juan Bosco Garcia
+ *Copyright 2018 2019 Almudena Garcia Jurado-Centurion
  *This file is part of Min_SMP. 
  *Min_SMP is free software: you can redistribute it and/or modify
  *it under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@
 
 void
 main(){
-	int i = 0;
 	int16 kernel_id;
 
     mem_setup();
@@ -43,13 +43,8 @@ main(){
     acpi_print_info();
     mp_print_info();
 
-	//lapicinit();
-
-	while(i < 5){
-		kernel_id = cpu_number();
-		printf("Current CPU: cpu %x\n", kernel_id&0xff); 
-		i++;
-	}
+	kernel_id = cpu_number();
+	printf("Current CPU: cpu %x\n", kernel_id&0xff); 
 
 
 idle:
