@@ -20,10 +20,6 @@
 #include <acpi.h>
 #include <types.h>
 
-/* TODO: send IPI and configure lapic
-
-*/
-
 
 typedef struct ApicReg
 {
@@ -38,51 +34,89 @@ typedef struct ApicIoUnit
 } ApicIoUnit;
 
 
-#define APIC_IO_UNIT_ID			0x00
-#define APIC_IO_VERSION			0x01
-#define APIC_IO_REDIR_LOW(int_pin)	(0x10+(int_pin)*2)
-#define APIC_IO_REDIR_HIGH(int_pin)	(0x11+(int_pin)*2)
+//#define APIC_IO_UNIT_ID			0x00
+//#define APIC_IO_VERSION			0x01
+//#define APIC_IO_REDIR_LOW(int_pin)	(0x10+(int_pin)*2)
+//#define APIC_IO_REDIR_HIGH(int_pin)	(0x11+(int_pin)*2)
 
 typedef struct ApicLocalUnit
 {
-	ApicReg reserved0;
-	ApicReg reserved1;
-	ApicReg apic_id;
-	ApicReg version;
-	ApicReg reserved4;
-	ApicReg reserved5;
-	ApicReg reserved6;
-	ApicReg reserved7;
-	ApicReg task_pri;
-	ApicReg arbitration_pri;
-	ApicReg processor_pri;
-	ApicReg eoi;
-	ApicReg remote;
-	ApicReg logical_dest;
-	ApicReg dest_format;
-	ApicReg spurious_vector;
-	ApicReg isr[8];
-	ApicReg tmr[8];
-	ApicReg irr[8];
-	ApicReg error_status;
-	ApicReg reserved28[5];
-	ApicReg lvt_cmci;
-	ApicReg icr_low;
-	ApicReg icr_high;
-	ApicReg timer_vector;
-	ApicReg thermal_sensor;
-	ApicReg performance_monitor;
-	ApicReg lint0_vector;
-	ApicReg lint1_vector;
-	ApicReg error;
-	ApicReg init_count;
-	ApicReg cur_count;
-	ApicReg reserved3a;
-	ApicReg reserved3b;
-	ApicReg reserved3c;
-	ApicReg reserved3d;
-	ApicReg divider_config;
-	ApicReg reserved3f;
+    /* 0x000 */
+    ApicReg reserved0;
+    /* 0x010 */
+    ApicReg reserved1;
+    /* 0x020 */
+    ApicReg apic_id;
+    /* 0x030 */
+    ApicReg version;
+    /* 0x040 */
+    ApicReg reserved4;
+    /* 0x050 */
+    ApicReg reserved5;
+    /* 0x060 */
+    ApicReg reserved6;
+    /* 0x070 */
+    ApicReg reserved7;
+    /* 0x080 */
+    ApicReg task_pri;
+    /* 0x090 */
+    ApicReg arbitration_pri;
+    /* 0x0a0 */
+    ApicReg processor_pri;
+    /* 0x0b0 */
+    ApicReg eoi;
+    /* 0x0c0 */
+    ApicReg remote;
+    /* 0x0d0 */
+    ApicReg logical_dest;
+    /* 0x0e0 */
+    ApicReg dest_format;
+    /* 0x0f0 */
+    ApicReg spurious_vector;
+    /* 0x100 */
+    ApicReg isr[8];
+    /* 0x180 */
+    ApicReg tmr[8];
+    /* 0x200 */
+    ApicReg irr[8];
+    /* 0x280 */
+    ApicReg error_status;
+    /* 0x290 */
+    ApicReg reserved28[6];
+    /* 0x2f0 */
+    ApicReg lvt_cmci;
+    /* 0x300 */
+    ApicReg icr_low;
+    /* 0x310 */
+    ApicReg icr_high;
+    /* 0x320 */
+    ApicReg timer_vector;
+    /* 0x330 */
+    ApicReg thermal_sensor;
+    /* 0x340 */
+    ApicReg performance_monitor;
+    /* 0x350 */
+    ApicReg lint0_vector;
+    /* 0x360 */
+    ApicReg lint1_vector;
+    /* 0x370 */
+    ApicReg error;
+    /* 0x380 */
+    ApicReg init_count;
+    /* 0x390 */
+    ApicReg cur_count;
+    /* 0x3a0 */
+    ApicReg reserved3a;
+    /* 0x3b0 */
+    ApicReg reserved3b;
+    /* 0x3c0 */
+    ApicReg reserved3c;
+    /* 0x3d0 */
+    ApicReg reserved3d;
+    /* 0x3e0 */
+    ApicReg divider_config;
+    /* 0x3f0 */
+    ApicReg reserved3f;
 } ApicLocalUnit;
 
 
