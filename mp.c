@@ -63,6 +63,7 @@ int mp_setup(){
 	
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
+    printf("offset icr_low: %x\n", (void*)(&lapic->icr_low) - (void*)lapic);
 
     for(i = 1; i < ncpu; i++){
         #define STACK_SIZE (4096 * 2)
@@ -70,15 +71,14 @@ int mp_setup(){
         cpus[i].stack_base = *stack_ptr;
 
         uint32 apic_id = cpus[i].apic_id;
-        printf("sending IPI to %x\n", apic_id);
+        printf("\nsending IPI to %x\n", apic_id);
 
         startup_cpu(apic_id);
+    
+        volatile uint32 *flags_p = &cpus[i].flags;
+	    while((*flags_p & CPU_ENABLE) == 0);
 
-        printf("IPI send\n");
     }
-
-	volatile uint32 *flags_p = &cpus[i].flags;
-	while((*flags_p & CPU_ENABLE) == 0);
 	
     return 0;
 }
@@ -135,9 +135,6 @@ void startup_cpu(uint32 apic_id){
     lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
 
     dummyf(lapic->apic_id.r);
-
-    //printf("\nicr_high: %x\n", lapic->icr_high.r);
-    //printf("\nicr_low: %x\n", lapic->icr_low.r);
 
 }
 
