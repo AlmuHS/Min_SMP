@@ -63,20 +63,18 @@ int mp_setup(){
 	
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
-    printf("offset icr_low: %x\n", (void*)(&lapic->icr_low) - (void*)lapic);
 
     for(i = 1; i < ncpu; i++){
         #define STACK_SIZE (4096 * 2)
         *stack_ptr = malloc(STACK_SIZE);
         cpus[i].stack_base = *stack_ptr;
 
-        uint32 apic_id = cpus[i].apic_id;
-        printf("\nsending IPI to %x\n", apic_id);
-
-        startup_cpu(apic_id);
+        //send IPI to start CPU
+        startup_cpu(cpus[i].apic_id);
     
+        //wait until new cpu is enabled
         volatile uint32 *flags_p = &cpus[i].flags;
-	    while((*flags_p & CPU_ENABLE) == 0);
+	    while(!(*flags_p & CPU_ENABLE));
 
     }
 	

@@ -13,8 +13,6 @@ cpu_setup(){
     int i = 0;
     while(i<ncpu && (cpus[i].flags & CPU_ENABLE)) i++;
 
-    printf("numcpu = %x\n", ncpu);
-
     /* panic? */
     if(i>=ncpu)
         return -1;
