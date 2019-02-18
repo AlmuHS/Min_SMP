@@ -57,7 +57,7 @@ int mp_setup(){
 	int i=0;
 
     /* setup BSP processor */
-	cpus[i].stack_base = &stack_bsp;
+    cpus[i].stack_base = &stack_bsp;
 
     if(cpu_setup()) return -1;
 	
@@ -77,8 +77,8 @@ int mp_setup(){
         printf("IPI send\n");
     }
 
-	//volatile uint32 *flags_p = &cpus[i].flags;
-	//while((*flags_p & CPU_ENABLE) == 0);
+	volatile uint32 *flags_p = &cpus[i].flags;
+	while((*flags_p & CPU_ENABLE) == 0);
 	
     return 0;
 }
@@ -118,51 +118,51 @@ void startup_cpu(uint32 apic_id){
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
-    
-	dummyf(lapic->apic_id.r);	
+
+    dummyf(lapic->apic_id.r);	
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
-    
-	dummyf(lapic->apic_id.r);	
+
+    dummyf(lapic->apic_id.r);	
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-    
-	dummyf(lapic->apic_id.r);
+
+    dummyf(lapic->apic_id.r);
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-    
-	dummyf(lapic->apic_id.r);
+
+    dummyf(lapic->apic_id.r);
 
     //printf("\nicr_high: %x\n", lapic->icr_high.r);
     //printf("\nicr_low: %x\n", lapic->icr_low.r);
-	
+
 }
 
 int16 cpu_number(){
-	uint32 apic_id;
+    uint32 apic_id;
     uint16 i = 0;
 
-	//Read apic id from the current cpu, using its lapic
-	apic_id = lapic->apic_id.r >>24;
+    //Read apic id from the current cpu, using its lapic
+    apic_id = lapic->apic_id.r >>24;
 
-	printf("apic id: %x ", apic_id);
-	printf("version: %x ", lapic->version.r);
+    printf("apic id: %x ", apic_id);
+    printf("version: %x ", lapic->version.r);
 
-	//Search apic id in cpu2apic vector
-	while(cpus[i].apic_id != apic_id && i < ncpu) i = i+1;
+    //Search apic id in cpu2apic vector
+    while(cpus[i].apic_id != apic_id && i < ncpu) i = i+1;
 
-	if(i == ncpu) return -1;
+    if(i == ncpu) return -1;
 
-	else return i;
+    else return i;
 }
 
 
 void send_IPI(unsigned icr_h, unsigned icr_l){	
-	lapic->icr_low.r = icr_l;
-	lapic->icr_high.r = icr_h;
+    lapic->icr_low.r = icr_l;
+    lapic->icr_high.r = icr_h;
 }
 
 
