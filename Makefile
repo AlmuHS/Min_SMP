@@ -42,15 +42,18 @@ clean:
 
 qemu: $(PROG)
 	qemu-system-i386 -m 512 -enable-kvm \
-		-smp 2 \
+		-cpu core2duo \
+		-smp 4		\
 		-kernel $(PROG) \
-		-curses		\
-		-cpu coreduo
+		-curses
+		#-monitor telnet:127.0.0.1:5565,server,nowait
 
 debug: $(PROG)
 	qemu-system-i386 -m 512 -enable-kvm \
+		-cpu core2duo \
 		-smp 2 \
 		-kernel $(PROG) \
 		-curses \
-		-S -s
+		-S -s \
+		-monitor telnet:127.0.0.1:5565,server,nowait 
 

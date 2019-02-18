@@ -23,7 +23,7 @@
 
 void
 main(){
-	int16 kernel_id;
+    int16 kernel_id;
 
     mem_setup();
     video_setup();
@@ -43,8 +43,8 @@ main(){
     acpi_print_info();
     mp_print_info();
 
-	kernel_id = cpu_number();
-	printf("Current CPU: cpu %x\n", kernel_id&0xff); 
+    kernel_id = cpu_number();
+    printf("Current CPU: cpu %x\n", kernel_id&0xff); 
 
 
 idle:
