@@ -59,6 +59,7 @@ int mp_setup(){
     /* setup BSP processor */
 	cpus[i].stack_base = &stack_bsp;
 
+    if(cpu_setup()) return -1;
 	
     //TODO: Start CPUs
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
@@ -107,7 +108,7 @@ mp_print_info(){
 }
 
 
-void startup_cpu(uint8 apic_id){	    
+void startup_cpu(uint32 apic_id){	    
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
@@ -129,8 +130,8 @@ void startup_cpu(uint8 apic_id){
     
 	dummyf(lapic->apic_id.r);
 
-    printf("\nicr_high: %x\n", lapic->icr_high.r);
-    printf("\nicr_low: %x\n", lapic->icr_low.r);
+    //printf("\nicr_high: %x\n", lapic->icr_high.r);
+    //printf("\nicr_low: %x\n", lapic->icr_low.r);
 	
 }
 

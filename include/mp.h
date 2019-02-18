@@ -21,7 +21,7 @@
 
 int mp_setup();
 
-void startup_cpu(uint8 apic_id);
+void startup_cpu(uint32 apic_id);
 
 void mp_print_info();
 

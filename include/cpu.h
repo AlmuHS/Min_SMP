@@ -6,7 +6,7 @@
 #define CPU_ENABLE (1 << 0)
 
 struct cpu {
-    uint8 apic_id;
+    uint32 apic_id;
 	uint32 flags;
 	void *stack_base;
 };
