@@ -69,7 +69,9 @@ int mp_setup(){
         *stack_ptr = malloc(STACK_SIZE);
 		cpus[i].stack_base = *stack_ptr;
 
-	    startup_cpu(cpus[i].apic_id);
+        uint32 apic_id = cpus[i].apic_id;
+
+	    startup_cpu(apic_id);
     }
 
 	volatile uint32 *flags_p = &cpus[i].flags;
