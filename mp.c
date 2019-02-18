@@ -65,17 +65,20 @@ int mp_setup(){
     memcpy((void*)AP_BOOT_ADDR, (void*)&apboot, (uint32)&apbootend - (uint32)&apboot);
 
     for(i = 1; i < ncpu; i++){
-		#define STACK_SIZE (4096 * 2)
+        #define STACK_SIZE (4096 * 2)
         *stack_ptr = malloc(STACK_SIZE);
-		cpus[i].stack_base = *stack_ptr;
+        cpus[i].stack_base = *stack_ptr;
 
         uint32 apic_id = cpus[i].apic_id;
+        printf("sending IPI to %x\n", apic_id);
 
-	    startup_cpu(apic_id);
+        startup_cpu(apic_id);
+
+        printf("IPI send\n");
     }
 
-	volatile uint32 *flags_p = &cpus[i].flags;
-	while((*flags_p & CPU_ENABLE) == 0);
+	//volatile uint32 *flags_p = &cpus[i].flags;
+	//while((*flags_p & CPU_ENABLE) == 0);
 	
     return 0;
 }
@@ -91,13 +94,14 @@ mp_print_info(){
     int i;
 
     for(i=0;i<ncpu;i++){
-        printf(" cpu %x: apic_id = %x\n", i, cpus[i].apic_id);
+        printf(" cpu %x: apic_id = %x", i, cpus[i].apic_id);
         if(cpus[i].flags & CPU_ENABLE) printf(" ENABLE");
         printf("\n");
     }
 
     printf("IOAPIC:\n");
     struct list *node;
+
     list_foreach(&ioapics, node){
         struct ioapic *ioapic;
         ioapic = list_get_entry(node, struct ioapic);
@@ -138,7 +142,8 @@ void startup_cpu(uint32 apic_id){
 }
 
 int16 cpu_number(){
-	uint16 apic_id, i = 0;
+	uint32 apic_id;
+    uint16 i = 0;
 
 	//Read apic id from the current cpu, using its lapic
 	apic_id = lapic->apic_id.r >>24;
