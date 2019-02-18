@@ -11,8 +11,9 @@ int
 cpu_setup(){
 
     int i = 0;
-    while(i<ncpu && (cpus[i].flags & CPU_ENABLE))
-        i++;
+    while(i<ncpu && (cpus[i].flags & CPU_ENABLE)) i++;
+
+    printf("numcpu = %x\n", ncpu);
 
     /* panic? */
     if(i>=ncpu)
@@ -26,14 +27,12 @@ cpu_setup(){
 }
 
 
-
-
 void
 cpu_ap_main(){
 
-	cpu_number();
+    printf("\ncurrent processor: %x\n", cpu_number());
 
-    if(cpu_setup())
+   if(cpu_setup())
         goto idle;
 
 idle:
