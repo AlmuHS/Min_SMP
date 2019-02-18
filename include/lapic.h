@@ -90,17 +90,17 @@ typedef struct ApicLocalUnit
     /* 0x310 */
     ApicReg icr_high;
     /* 0x320 */
-    ApicReg timer_vector;
+    ApicReg lvt_timer;
     /* 0x330 */
-    ApicReg thermal_sensor;
+    ApicReg lvt_thermal;
     /* 0x340 */
-    ApicReg performance_monitor;
+    ApicReg lvt_performance_monitor;
     /* 0x350 */
-    ApicReg lint0_vector;
+    ApicReg lvt_lint0;
     /* 0x360 */
-    ApicReg lint1_vector;
+    ApicReg lvt_lint1;
     /* 0x370 */
-    ApicReg error;
+    ApicReg lvt_error;
     /* 0x380 */
     ApicReg init_count;
     /* 0x390 */
@@ -118,6 +118,7 @@ typedef struct ApicLocalUnit
     /* 0x3f0 */
     ApicReg reserved3f;
 } ApicLocalUnit;
+
 
 
 
