@@ -113,24 +113,30 @@ mp_print_info(){
 
 
 void startup_cpu(uint32 apic_id){	    
+    unsigned icr_h = 0;
+    unsigned icr_l = 0;
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
-
-    dummyf(lapic->apic_id.r);	
-
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
+    icr_h = (apic_id << 24);
+    icr_l = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15); 
+    send_IPI(icr_h, icr_l);
 
     dummyf(lapic->apic_id.r);	
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
+    icr_h = (apic_id << 24);
+    icr_l = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
+    send_IPI(icr_h, icr_l);
+
+    dummyf(lapic->apic_id.r);	
+
+    icr_h = (apic_id << 24);
+    icr_l = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
+    send_IPI(icr_h, icr_l);
 
     dummyf(lapic->apic_id.r);
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
+    icr_h = (apic_id << 24);
+    icr_l = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
+    send_IPI(icr_h, icr_l);
 
     dummyf(lapic->apic_id.r);
 
@@ -155,9 +161,9 @@ int16 cpu_number(){
 }
 
 
-void send_IPI(unsigned icr_h, unsigned icr_l){	
-    lapic->icr_low.r = icr_l;
+void send_IPI(unsigned icr_h, unsigned icr_l){
     lapic->icr_high.r = icr_h;
+    lapic->icr_low.r = icr_l;    
 }
 
 
