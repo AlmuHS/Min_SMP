@@ -47,6 +47,7 @@ extern struct list ioapics;
 extern struct cpu cpus[NCPU];
 extern int ncpu;
 extern void* *apboot, *apbootend;
+extern void dummyf(uint32);
 
 extern void* *stack_ptr;
 
@@ -111,22 +112,22 @@ void startup_cpu(uint8 apic_id){
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
     
-	lapic->apic_id.r;	
+	dummyf(lapic->apic_id.r);	
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
     
-	lapic->apic_id.r;	
+	dummyf(lapic->apic_id.r);	
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
     
-	lapic->apic_id.r;
+	dummyf(lapic->apic_id.r);
 
     lapic->icr_high.r = (apic_id << 24);
     lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
     
-	lapic->apic_id.r;
+	dummyf(lapic->apic_id.r);
 
     printf("\nicr_high: %x\n", lapic->icr_high.r);
     printf("\nicr_low: %x\n", lapic->icr_low.r);

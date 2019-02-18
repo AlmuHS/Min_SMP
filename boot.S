@@ -162,3 +162,7 @@ stack_ptr:
 _apbootend:
 apbootend:
 
+    .globl dummyf
+dummyf:
+ret
+
