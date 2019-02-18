@@ -1,19 +1,3 @@
-/*Copyright 2018 Juan Bosco Garcia
- *This file is part of Min_SMP. 
- *Min_SMP is free software: you can redistribute it and/or modify
- *it under the terms of the GNU General Public License as published by
- *the Free Software Foundation, either version 3 of the License, or
- *(at your option) any later version.
- *Min_SMP is distributed in the hope that it will be useful,
- *but WITHOUT ANY WARRANTY; without even the implied warranty of
- *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *GNU General Public License for more details.
- *You should have received a copy of the GNU General Public License
- *along with Min_SMP.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
-
 #define MULTIBOOT_MAGIC 0x1badb002
 #define MULTIBOOT_FLAGS 0x0
 #define MULTIBOOT_CHECKSUM -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
@@ -112,6 +96,7 @@ gdt:
     .comm stack_bsp, STACK_SIZE
 
 
+#define M(addr) (addr - apboot + 0x7000)
 
     .text
     .globl apboot, apbootend, stack_ptr
@@ -119,36 +104,48 @@ gdt:
     .code16
 apboot:
 _apboot:
-    cli
-1:
-    hlt
-    jmp 1b
 
-    
-    /* it this works? */
-    .code32
-    lgdtl gdt_descr
-    .code16
+
+    cli
+    xor %ax, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %ss
+    mov $0x7000, %sp
+
+    lgdt M(gdt_descr_tmp)
 
     mov %cr0, %eax
-    or 0x1, %eax
+    or $0x1, %eax
     mov %eax, %cr0
 
+    ljmp $0x8, $M(1f)
+1:
     .code32
+
+    mov $0x10, %eax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %ss
+    mov $0x7000, %esp
+
+    lidtl idt_descr
+
+    lgdt gdt_descr
     ljmpl $0x8, $1f
 1:
     mov $0x10, %eax
     movw %ax, %ds
     movw %ax, %es
 
+
+
     movw %ax, %ss
     movl stack_ptr, %esp
     addl $STACK_SIZE, %esp
 
-    lidtl idt_descr
-
     pushl stack_ptr
-	call cpu_ap_main
+    call cpu_ap_main
 
 
     cli
@@ -159,10 +156,35 @@ _apboot:
 stack_ptr:
     .long 0x0
 
+    .align 0x10
+gdt_descr_tmp:
+    .short 0x8*3 - 1
+    .long M(gdt_tmp)
+
+    .align 0x10
+
+gdt_tmp:
+    /* 0 */
+    .quad 0
+    /* boot CS = 0x8 */
+    .word 0xffff
+    .word 0x0000
+    .byte 0x00
+    .byte 0x9a
+    .byte 0xcf
+    .byte 0x00
+    /* boot DS = 0x10 */
+    .word 0xffff
+    .word 0x0000
+    .byte 0x00
+    .byte 0x92
+    .byte 0xcf
+    .byte 0x00
+
+
 _apbootend:
 apbootend:
 
     .globl dummyf
 dummyf:
 ret
-
