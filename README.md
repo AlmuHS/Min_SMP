@@ -1,5 +1,5 @@
 # Min_SMP
-Pequeño modelo de pruebas para sistema multiprocesador. Basado en el proyecto [MinSMP](https://github.com/jbgg/MinSMP) desarrollado por [Juan Bosco García](https://github.com/jbgg)
+Pequeño modelo de pruebas para sistema multiprocesador. Basado en el proyecto [MinSMP](https://github.com/jbgg/MinSMP) de [Juan Bosco García](https://github.com/jbgg)
 
 ## Introducción
 
