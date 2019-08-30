@@ -32,7 +32,7 @@ static int acpi_get_rsdt();
 
 static int acpi_apic_setup();
 extern int ncpu;
-extern volatile uint16* lapic;
+extern volatile ApicLocalUnit* lapic;
 extern struct cpu cpus[];
 extern int cpu;
 
@@ -219,7 +219,7 @@ acpi_apic_setup(){
 
     ncpu = 0;
     nioapic = 0;
-    lapic = (uint16*) apic->lapic_addr;
+    lapic = (ApicLocalUnit*) apic->lapic_addr;
     list_init(&ioapics);
     struct acpi_apic_dhdr *apic_entry = apic->entry;
     uint32 end = (uint32) apic + apic->header.length;
