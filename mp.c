@@ -27,6 +27,8 @@ extern struct list ioapics;
 extern void* *apboot, *apbootend;
 extern void dummyf(uint32);
 
+extern struct cpu cpus[NCPU];
+
 extern void* *stack_ptr;
 
 extern void *stack_bsp;
@@ -89,8 +91,10 @@ mp_print_info(){
 
 }
 
-
+/*TODO: Add delay between IPI*/
 void startup_cpu(uint32 apic_id){	    
+    //unsigned icr_h = 0;
+    //unsigned icr_l = 0;
 
     //lapic->icr_high.r = (apic_id << 24);
     //lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
@@ -139,6 +143,7 @@ int16 cpu_number(){
 
     else return i;
 }
+
 
 
 void send_ipi(unsigned dest_shorthand, unsigned deliv_mode, unsigned dest_mode, unsigned level, unsigned trig_mode, unsigned vector, unsigned dest_id)

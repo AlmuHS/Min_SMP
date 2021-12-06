@@ -31,10 +31,9 @@ static int acpi_check_rsdt(struct acpi_rsdt *);
 static int acpi_get_rsdt();
 
 static int acpi_apic_setup();
-//extern int ncpu;
+extern int ncpu;
 extern volatile ApicLocalUnit* lapic;
-//extern struct cpu cpus[];
-//extern int cpu;
+extern struct cpu cpus[];
 
 extern int nioapic;
 extern struct list ioapics;
@@ -156,19 +155,20 @@ acpi_get_rsdp(){
 
     uint32 base = 0x0;
 
-	//EDBA start address 
-    base = *((uint16*) 0x040e);
+    //EDBA start address 
+    //base = (uint32*) *((uint16*) 0x040e);
+    base = *((uint16*) 0x040e); 
 
     if(base != 0){	//Memory check
 
         base <<= 4; //base = base * 16
 
-		//Search RSDP in first 1024 bytes from EDBA
+        //Search RSDP in first 1024 bytes from EDBA
         if(acpi_search_rsdp((void*)base,1024) == 0)
             return 0;
     }
 
-	//If RSDP isn't in EDBA, search in the BIOS read-only memory space between 0E0000h and 0FFFFFh
+    //If RSDP isn't in EDBA, search in the BIOS read-only memory space between 0E0000h and 0FFFFFh
     if(acpi_search_rsdp((void*)0x0e0000, 0x100000 - 0x0e0000) == 0)
         return 0;
 

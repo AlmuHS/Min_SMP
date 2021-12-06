@@ -13,6 +13,11 @@
  *along with Min_SMP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*Partially based in x15 project, by Richard Braun
+ *https://github.com/richardbraun/x15
+ *
+ */
+
 
 #ifndef __LAPIC_H__
 #define __LAPIC_H__
@@ -20,12 +25,40 @@
 #include <acpi.h>
 #include <types.h>
 
-
 #include <stdint.h>
+/*
+ * Common bits for registers in the local vector table.
+ */
+#define LAPIC_LVT_DELIVERY_FIXED    0x00000000
+#define LAPIC_LVT_DELIVERY_NMI      0x00000400
+#define LAPIC_LVT_DELIVERY_EXTINT   0x00000700
+#define LAPIC_LVT_MASK_INTR 0x00010000
 
-typedef struct ApicReg {
-        uint32_t r;	/* the actual register */
-        uint32_t p[3];	/* pad to the next 128-bit boundary */
+/*
+ * LVT timer register bits.
+ */
+#define LAPIC_LVT_TIMER_PERIODIC    0x00020000
+
+/*
+ * Various values related to the local APIC timer.
+ */
+#define LAPIC_TIMER_DCR_DIV1    0x0000000b
+#define LAPIC_TIMER_COUNT_MAX   0xffffffff
+
+/*
+ * Delay used to calibrate the local APIC timer, in microseconds.
+ */
+#define LAPIC_TIMER_CAL_DELAY   100000
+
+/*
+ * Spurious-interrupt vector register bits.
+ */
+#define LAPIC_SVR_SOFT_EN 0x00000100
+
+typedef struct ApicReg
+{
+	unsigned r;	/* the actual register */
+	unsigned p[3];	/* pad to the next 128-bit boundary */
 } ApicReg;
 
 /* Grateful to trasterlabs for this snippet */
