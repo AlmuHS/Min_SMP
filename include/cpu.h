@@ -12,9 +12,6 @@ struct cpu {
 };
 
 
-int ncpu;
-struct cpu cpus[NCPU];
-
 int cpu_setup();
 
 void cpu_ap_main();
