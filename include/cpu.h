@@ -7,8 +7,8 @@
 
 struct cpu {
     uint32 apic_id;
-	uint32 flags;
-	void *stack_base;
+    uint32 flags;
+    void *stack_base;
 };
 
 

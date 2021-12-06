@@ -31,10 +31,10 @@ static int acpi_check_rsdt(struct acpi_rsdt *);
 static int acpi_get_rsdt();
 
 static int acpi_apic_setup();
-extern int ncpu;
+//extern int ncpu;
 extern volatile ApicLocalUnit* lapic;
-extern struct cpu cpus[];
-extern int cpu;
+//extern struct cpu cpus[];
+//extern int cpu;
 
 extern int nioapic;
 extern struct list ioapics;
