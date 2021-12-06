@@ -46,7 +46,6 @@ struct cpu {
 
 
 extern int ncpu;
-struct cpu cpus[NCPU];
 
 int cpu_setup();
 

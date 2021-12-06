@@ -7,6 +7,7 @@
 
 extern volatile ApicLocalUnit* lapic;
 int ncpu;
+struct cpu cpus[NCPU];
 
 int
 cpu_setup(){
