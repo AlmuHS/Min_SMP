@@ -92,36 +92,22 @@ mp_print_info(){
 }
 
 /*TODO: Add delay between IPI*/
-void startup_cpu(uint32 apic_id){	    
-    //unsigned icr_h = 0;
-    //unsigned icr_l = 0;
-
-    //lapic->icr_high.r = (apic_id << 24);
-    //lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
-    
-    send_ipi(SELF, INIT, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
-
+void startup_cpu(uint32 apic_id){
+	    
+    /* First INIT IPI */	    
+    send_ipi(NO_SHORTHAND, INIT, PHYSICAL, ASSERT, LEVEL, 0 , apic_id);
     dummyf(lapic->apic_id.r);	
 
-    //lapic->icr_high.r = (apic_id << 24);
-    //lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
-
-    send_ipi(SELF, INIT, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
-
+    /* Second INIT IPI */
+    send_ipi(NO_SHORTHAND, INIT, PHYSICAL, ASSERT, LEVEL, 0 , apic_id);
     dummyf(lapic->apic_id.r);	
 
-    //lapic->icr_high.r = (apic_id << 24);
-    //lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-
-    send_ipi(SELF, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
-
+    /* First StartUp IPI */
+    send_ipi(NO_SHORTHAND, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
     dummyf(lapic->apic_id.r);
 
-    //lapic->icr_high.r = (apic_id << 24);
-    //lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-
-    send_ipi(SELF, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
-
+    /* Second StartUp IPI */
+    send_ipi(NO_SHORTHAND, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
     dummyf(lapic->apic_id.r);
 
 }
@@ -148,17 +134,20 @@ int16 cpu_number(){
 
 void send_ipi(unsigned dest_shorthand, unsigned deliv_mode, unsigned dest_mode, unsigned level, unsigned trig_mode, unsigned vector, unsigned dest_id)
 {
-    IcrReg icr_values;
+    IcrLReg icrl_values;
+    IcrHReg icrh_values;
     
-    icr_values.destination_shorthand = dest_shorthand;
-    icr_values.delivery_mode = deliv_mode;
-    icr_values.destination_mode = dest_mode;
-    icr_values.level = level;
-    icr_values.trigger_mode = trig_mode;
-    icr_values.vector = vector;
-    icr_values.destination_field = dest_id;
+    icrl_values.destination_shorthand = dest_shorthand;
+    icrl_values.delivery_mode = deliv_mode;
+    icrl_values.destination_mode = dest_mode;
+    icrl_values.level = level;
+    icrl_values.trigger_mode = trig_mode;
+    icrl_values.vector = vector;
+    icrh_values.destination_field = dest_id;
     
-    lapic->icr = icr_values;
+    lapic->icr_high = icrh_values;
+    lapic->icr_low = icrl_values;
+    
 }
 
 
