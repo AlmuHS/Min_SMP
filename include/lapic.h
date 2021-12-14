@@ -68,7 +68,7 @@ typedef union u_icr_low
     uint32_t value[4];
     struct
     {
-        uint32_t low;  // FEE0 0300H - 4 bytes
+        uint32_t r;  // FEE0 0300H - 4 bytes
         unsigned :32;  // FEE0 0304H
         unsigned :32;  // FEE0 0308H
         unsigned :32;  // FEE0 030CH
@@ -94,7 +94,7 @@ typedef union u_icr_high
     uint32_t value[4];
     struct
     {
-        uint32_t high; // FEE0 0310H - 4 bytes
+        uint32_t r; // FEE0 0310H - 4 bytes
         unsigned :32;  // FEE0 0314H
         unsigned :32;  // FEE0 0318H
         unsigned :32;  // FEE0 031CH
@@ -173,7 +173,7 @@ typedef struct ApicLocalUnit {
         ApicReg reserved28[6];           /* 0x290 */
         ApicReg lvt_cmci;                /* 0x2f0 */
         IcrLReg icr_low;                 /* 0x300. Store the information to send an IPI (Inter-processor Interrupt) */
-        IcrHReg icr_high;                 /* 0x310. Store the information to send an IPI (Inter-processor Interrupt) */
+        IcrHReg icr_high;                /* 0x310. Store the IPI destination  */
         ApicReg lvt_timer;               /* 0x320 */
         ApicReg lvt_thermal;             /* 0x330 */
         ApicReg lvt_performance_monitor; /* 0x340 */
