@@ -42,7 +42,7 @@ clean:
 
 qemu: $(PROG)
 	qemu-system-i386 -m 512 -enable-kvm \
-		-cpu core2duo \
+		-cpu coreduo \
 		-smp 4		\
 		-kernel $(PROG) \
 		-curses

@@ -27,7 +27,7 @@ void mp_print_info();
 
 int16 cpu_number();
 
-void send_IPI(unsigned icr_h, unsigned icr_l);
+void send_ipi(unsigned dest_shorthand, unsigned deliv_mode, unsigned dest_mode, unsigned level, unsigned trig_mode, unsigned vector, unsigned dest_id);
 
 
 

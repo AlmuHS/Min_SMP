@@ -21,33 +21,13 @@
 
 #define AP_BOOT_ADDR (0x7000)	
 
-//ICR Destination mode
-#define PHYSICAL 0
-#define LOGICAL 1
-
-//ICR Delivery mode
-#define STARTUP 6
-#define INIT 5
-
-//ICR Level
-#define DE_ASSERT 0
-#define ASSERT 1
-
-//ICR Trigger mode
-#define EDGE 0
-#define LEVEL 1
-
-//ICR Destination Shorthand
-#define NO_SHORTHAND 0
-
-
 extern volatile ApicLocalUnit* lapic;
 extern uint32 nioapic;	
 extern struct list ioapics;
-extern struct cpu cpus[NCPU];
-extern int ncpu;
 extern void* *apboot, *apbootend;
 extern void dummyf(uint32);
+
+extern struct cpu cpus[NCPU];
 
 extern void* *stack_ptr;
 
@@ -111,27 +91,23 @@ mp_print_info(){
 
 }
 
-
-void startup_cpu(uint32 apic_id){	    
-
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (INIT << 8) | (ASSERT << 14) | (LEVEL << 15);    
-
+/*TODO: Add delay between IPI*/
+void startup_cpu(uint32 apic_id){
+	    
+    /* First INIT IPI */	    
+    send_ipi(NO_SHORTHAND, INIT, PHYSICAL, ASSERT, LEVEL, 0 , apic_id);
     dummyf(lapic->apic_id.r);	
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (INIT << 8) | (DE_ASSERT << 14) | (LEVEL << 15);
-
+    /* Second INIT IPI */
+    send_ipi(NO_SHORTHAND, INIT, PHYSICAL, ASSERT, LEVEL, 0 , apic_id);
     dummyf(lapic->apic_id.r);	
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-
+    /* First StartUp IPI */
+    send_ipi(NO_SHORTHAND, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
     dummyf(lapic->apic_id.r);
 
-    lapic->icr_high.r = (apic_id << 24);
-    lapic->icr_low.r = (STARTUP << 8) | ((AP_BOOT_ADDR >>12) & 0xff);
-
+    /* Second StartUp IPI */
+    send_ipi(NO_SHORTHAND, STARTUP, PHYSICAL, ASSERT, LEVEL, AP_BOOT_ADDR >>12 , apic_id);
     dummyf(lapic->apic_id.r);
 
 }
@@ -155,9 +131,23 @@ int16 cpu_number(){
 }
 
 
-void send_IPI(unsigned icr_h, unsigned icr_l){	
-    lapic->icr_low.r = icr_l;
-    lapic->icr_high.r = icr_h;
+
+void send_ipi(unsigned dest_shorthand, unsigned deliv_mode, unsigned dest_mode, unsigned level, unsigned trig_mode, unsigned vector, unsigned dest_id)
+{
+    IcrLReg icrl_values;
+    IcrHReg icrh_values;
+    
+    icrl_values.destination_shorthand = dest_shorthand;
+    icrl_values.delivery_mode = deliv_mode;
+    icrl_values.destination_mode = dest_mode;
+    icrl_values.level = level;
+    icrl_values.trigger_mode = trig_mode;
+    icrl_values.vector = vector;
+    icrh_values.destination_field = dest_id;
+    
+    lapic->icr_high = icrh_values;
+    lapic->icr_low = icrl_values;
+    
 }
 
 
